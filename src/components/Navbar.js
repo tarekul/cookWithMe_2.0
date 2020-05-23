@@ -160,7 +160,6 @@ function Navbar(props) {
             onChange={e => handleChange(e)}
             onKeyDown={e => handleSearch(e)}
             value={search}
-            autoFocus
           />
         </div>
         <div className={classes.buttonGroup}>{buttonLayout()}</div>

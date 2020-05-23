@@ -1,14 +1,15 @@
 import Artyom from "artyom.js";
 
 export default class WebSpeech {
-  constructor(steps, func) {
+  constructor(steps, parentFunc) {
     this.jarvis = new Artyom();
     this.steps = steps;
     this.index = 0;
-    this.func = func;
+    this.parentFunc = parentFunc;
   }
 
-  loadCommands = () => {
+  loadCommands = (index = 0) => {
+    this.index = index;
     return this.jarvis.addCommands([
       {
         indexes: [
@@ -38,7 +39,8 @@ export default class WebSpeech {
       {
         indexes: ["restart", "first step", "beginning"],
         action: i => {
-          this.func(0, () => {
+          this.jarvis.shutUp();
+          this.parentFunc(0, () => {
             this.index = 0;
             this.jarvis.say("Okay restarting");
           });
@@ -56,16 +58,17 @@ export default class WebSpeech {
       {
         indexes: ["previous", "back", "past", "ack", "prev"],
         action: i => {
+          this.jarvis.shutUp();
           if (this.index - 1 >= 0) {
             this.index = this.index - 1;
-            this.func(this.index, () => {
+            this.parentFunc(this.index, () => {
               this.jarvis.say(this.steps[this.index], {
                 onEnd: () => {
                   this.jarvis.ArtyomWebkitSpeechRecognition.abort();
                 }
               });
               this.jarvis.emptyCommands();
-              this.loadCommands();
+              this.loadCommands(this.index);
             });
           } else {
             this.jarvis.say("Their are no more directions");
@@ -75,16 +78,17 @@ export default class WebSpeech {
       {
         indexes: ["next", "text", "test"],
         action: i => {
+          this.jarvis.shutUp();
           if (this.index < this.steps.length - 1) {
             this.index = this.index + 1;
-            this.func(this.index, () => {
+            this.parentFunc(this.index, () => {
               this.jarvis.say(this.steps[this.index], {
                 onEnd: () => {
                   this.jarvis.ArtyomWebkitSpeechRecognition.abort();
                 }
               });
               this.jarvis.emptyCommands();
-              this.loadCommands();
+              this.loadCommands(this.index);
             });
           } else {
             this.jarvis.say("Their are no more directions");
@@ -95,13 +99,13 @@ export default class WebSpeech {
         indexes: ["last step", "last"],
         action: i => {
           this.index = this.steps.length - 1;
-          this.func(this.index, () => {
+          this.parentFunc(this.index, () => {
             this.jarvis.say("Okay moving to the last step", {
               onEnd: () => {
                 this.jarvis.ArtyomWebkitSpeechRecognition.abort();
               }
             });
-            this.loadCommands();
+            this.loadCommands(this.index);
           });
         }
       }
@@ -124,6 +128,7 @@ export default class WebSpeech {
   };
 
   stopAssistant = () => {
+    this.jarvis.shutUp();
     this.jarvis.fatality().catch(err => {
       console.error("Oopsy daisy, this shouldn't happen neither!", err);
     });

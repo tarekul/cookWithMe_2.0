@@ -125,7 +125,7 @@ const styles = theme => ({
   },
   leftPlayRight: {
     padding: "20px",
-    float: "right"
+    float: "left"
   }
 });
 
@@ -149,33 +149,41 @@ class Cook extends React.Component {
       this.setState({ title: localRecipe.title });
       this.setState({ ingredients: localRecipe.ingredients });
       this.setState({ steps: localRecipe.steps }, () => {
-        this.ws = new WebSpeech(this.state.steps, this.func);
+        this.ws = new WebSpeech(this.state.steps, this.parentFunc);
         this.ws.loadCommands();
       });
     } else if (this.props.recipe.steps.length > 0) {
       this.setState({ title: this.props.recipe.title });
       this.setState({ ingredients: this.props.recipe.ingredients });
       this.setState({ steps: this.props.recipe.steps }, () => {
-        this.ws = new WebSpeech(this.state.steps, this.func);
+        this.ws = new WebSpeech(this.state.steps, this.parentFunc);
         this.ws.loadCommands();
       });
     } else this.props.history.push("/");
   }
 
-  func = (index, cb) => {
+  componentWillUnmount() {
+    this.ws.stopAssistant();
+  }
+
+  parentFunc = (index, cb) => {
     this.setState({ current: index }, cb);
   };
 
   stepForward() {
     const { current, steps } = this.state;
     if (current + 1 < steps.length) {
-      this.setState({ current: current + 1 });
+      this.setState({ current: current + 1 }, () => {
+        this.ws.loadCommands(this.state.current);
+      });
     }
   }
   stepBack() {
     const { current } = this.state;
     if (current + 1 > 1) {
-      this.setState({ current: current - 1 });
+      this.setState({ current: current - 1 }, () => {
+        this.ws.loadCommands(this.state.current);
+      });
     }
   }
 
@@ -218,26 +226,27 @@ class Cook extends React.Component {
             <div className={classes.leftContainer}>
               <div className={classes.step}>{steps[current]}</div>
             </div>
+            <div className={classes.leftPlayRight}>
+              <IconButton onClick={e => this.stepBack()}>
+                <ArrowBackIosIcon className={classes.cookIcon} />
+              </IconButton>
+              <IconButton
+                style={{ paddingLeft: "0" }}
+                onClick={e => (this.ws ? this.ws.startAssistant() : "")}
+              >
+                <PlayCircleOutlineIcon className={classes.cookIcon} />
+              </IconButton>
+              <IconButton onClick={e => this.stepForward()}>
+                <ArrowForwardIosIcon className={classes.cookIcon} />
+              </IconButton>
+            </div>
           </Grid>
           <Grid item xs={12} sm={12} md={3} lg={3}>
             <h5 className={classes.ingredTitle}>Ingredients</h5>
             <ul className={classes.listIngred}>{this.ingredUI()}</ul>
           </Grid>
         </Grid>
-        <div className={classes.leftPlayRight}>
-          <IconButton onClick={e => this.stepBack()}>
-            <ArrowBackIosIcon className={classes.cookIcon} />
-          </IconButton>
-          <IconButton
-            style={{ paddingLeft: "0" }}
-            onClick={e => (this.ws ? this.ws.startAssistant() : "")}
-          >
-            <PlayCircleOutlineIcon className={classes.cookIcon} />
-          </IconButton>
-          <IconButton onClick={e => this.stepForward()}>
-            <ArrowForwardIosIcon className={classes.cookIcon} />
-          </IconButton>
-        </div>
+
         <Dialog open={dialogState}>
           <DialogTitle>How to Use Cooking Mode</DialogTitle>
           <DialogContent>
