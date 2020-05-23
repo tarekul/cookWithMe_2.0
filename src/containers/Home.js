@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import carrot from "../carrots-food.jpg";
 //MUI
 import { makeStyles } from "@material-ui/core/styles";
 import { Grid } from "@material-ui/core";
@@ -90,9 +91,11 @@ function Home(props) {
   return (
     <>
       <Navbar />
-      <Grid container direction="row" className={classes.content}>
-        {createGrid(props.selectRecipe)}
-      </Grid>
+      <div style={{ backgroundColor: "aliceblue" }}>
+        <Grid container direction="row" className={classes.content}>
+          {createGrid(props.selectRecipe)}
+        </Grid>
+      </div>
     </>
   );
 }
