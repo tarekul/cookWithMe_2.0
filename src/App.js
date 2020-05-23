@@ -1,6 +1,6 @@
 import React from "react";
 import "./App.css";
-import { Route, BrowserRouter } from "react-router-dom";
+import { Route, HashRouter } from "react-router-dom";
 import { ThemeProvider as MuiThemeProvider } from "@material-ui/core/styles";
 import { createMuiTheme } from "@material-ui/core/styles";
 import axios from "axios";
@@ -59,14 +59,14 @@ class App extends React.Component {
     return (
       <Provider store={store}>
         <MuiThemeProvider theme={theme}>
-          <BrowserRouter>
+          <HashRouter>
             <Route path="/" component={Register} />
             <Route path="/" exact component={Home} />
             <Route exact path="/recipe/:title" component={Recipe} />
             <Route path="/recipe/:id/cook" component={Cook} />
             <Route exact path="/profile" component={Profile} />
             <Route exact path="/addrecipe" component={AddRecipe} />
-          </BrowserRouter>
+          </HashRouter>
         </MuiThemeProvider>
       </Provider>
     );
