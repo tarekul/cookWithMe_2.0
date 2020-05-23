@@ -47,7 +47,10 @@ export default class WebSpeech {
       {
         indexes: ["pause", "stop"],
         action: i => {
-          this.jarvis.dontObey();
+          this.jarvis.fatality();
+          setTimeout(() => {
+            this.startAssistant();
+          }, 250);
         }
       },
       {
