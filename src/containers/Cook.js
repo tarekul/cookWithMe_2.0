@@ -250,8 +250,9 @@ class Cook extends React.Component {
         <Dialog open={dialogState}>
           <DialogTitle>How to Use Cooking Mode</DialogTitle>
           <DialogContent>
-            This is your personal cooking assistant. Use START, STOP, BACK, NEXT
-            commands to guide your assistant
+            This is your personal cooking assistant. To start assistant click on
+            the play button. Use START, STOP, BACK, NEXT commands to guide your
+            assistant
           </DialogContent>
           <DialogActions>
             <Button
