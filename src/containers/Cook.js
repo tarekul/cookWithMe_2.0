@@ -193,6 +193,14 @@ class Cook extends React.Component {
       return <li key={i}>{ing}</li>;
     });
   }
+
+  startAssistant() {
+    if (this.ws.isRecognizing()) this.ws.stopAssistant();
+    else {
+      this.ws.startAssistant();
+      this.ws.speak("Hi their lets start cooking");
+    }
+  }
   render() {
     const { classes } = this.props;
     const { title, current, steps, dialogState } = this.state;
@@ -232,7 +240,7 @@ class Cook extends React.Component {
               </IconButton>
               <IconButton
                 style={{ paddingLeft: "0" }}
-                onClick={e => (this.ws ? this.ws.startAssistant() : "")}
+                onClick={e => (this.ws ? this.startAssistant() : "")}
               >
                 <PlayCircleOutlineIcon className={classes.cookIcon} />
               </IconButton>
@@ -251,8 +259,9 @@ class Cook extends React.Component {
           <DialogTitle>How to Use Cooking Mode</DialogTitle>
           <DialogContent>
             This is your personal cooking assistant. To start assistant click on
-            the play button. Use START, STOP, BACK, NEXT commands to guide your
-            assistant
+            the play button. Use START, PAUSE, RESUME, RESTART, LAST, BACK, NEXT
+            commands to guide your assistant. Click on the play button to stop
+            the assistant
           </DialogContent>
           <DialogActions>
             <Button

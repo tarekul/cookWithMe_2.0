@@ -32,8 +32,9 @@ export default class WebSpeech {
       {
         indexes: ["resume"],
         action: i => {
-          this.jarvis.obey();
-          this.jarvis.say("Okay resuming");
+          this.jarvis.restart().then(() => {
+            this.jarvis.say("Okay resuming");
+          });
         }
       },
       {
@@ -49,10 +50,7 @@ export default class WebSpeech {
       {
         indexes: ["pause", "stop"],
         action: i => {
-          this.jarvis.fatality();
-          setTimeout(() => {
-            this.startAssistant();
-          }, 250);
+          this.jarvis.shutUp();
         }
       },
       {
@@ -126,7 +124,17 @@ export default class WebSpeech {
         console.error("Oopsy daisy, this shouldn't happen !", err);
       });
   };
+  isRecognizing = () => {
+    return this.jarvis.isRecognizing();
+  };
 
+  speak = statement => {
+    this.jarvis.say(statement, {
+      onEnd: () => {
+        this.jarvis.ArtyomWebkitSpeechRecognition.abort();
+      }
+    });
+  };
   stopAssistant = () => {
     this.jarvis.shutUp();
     this.jarvis.fatality().catch(err => {
